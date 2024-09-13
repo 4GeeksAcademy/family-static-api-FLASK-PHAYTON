@@ -28,23 +28,21 @@ def sitemap():
 @app.route('/members', methods=['GET'])
 def handle_hello():
     members = jackson_family.get_all_members()
-    response_body = {
-        "miembros": members
-    }
-    return jsonify(response_body), 200
+   
+    return jsonify(members), 200
 
 @app.route('/member', methods=['POST'])
 def add_member():
     new_member = request.json
     jackson_family.add_member(new_member)
-    return jsonify({"Hecho": "Usuario creado"})
+    return jsonify({"done": "Usuario creado"})
+
 
 @app.route('/member/<int:member_id>', methods=['DELETE'])
-def delete_family_member(member_id):
-    eliminar_familiar = jackson_family.delete_member(member_id)
-    if not eliminar_familiar:
-        return jsonify({"Mensaje": "Familiar no encontrado"}), 400
-    return jsonify({"Hecho": "Familiar borrado"}), 200
+def delete_member(member_id):
+    if jackson_family.delete_member(member_id):
+        return jsonify({"done": True}), 200
+    return jsonify({"message": "Member not found"}), 404 
 
 @app.route('/member/<int:member_id>', methods=['PUT'])
 def update_family_member(member_id):
@@ -52,7 +50,7 @@ def update_family_member(member_id):
     update_member = jackson_family.update_member(member_id, new_member)
     if not update_member:
         return jsonify({"Mensaje": "No se encontró el miembro"}), 400
-    return jsonify({"Hecho": "Miembro actualizado"}), 200
+    return jsonify({"done": "Miembro actualizado"}), 200
 
 @app.route('/member/<int:member_id>', methods=['GET'])
 def get_one_member(member_id):
